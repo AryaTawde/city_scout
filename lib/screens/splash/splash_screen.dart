@@ -1,3 +1,4 @@
+import 'package:city_scout/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -36,7 +37,14 @@ class SplashScreen extends StatelessWidget {
             SizedBox(height: 40),
 
             ElevatedButton(
-              onPressed: () {},
+             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
+            },
               child: Text("Get Started"),
             )
 
