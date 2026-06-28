@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:city_scout/screens/home/home_screen.dart';
+import 'package:city_scout/services/auth_service.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+ LoginScreen({super.key});
+  final AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,29 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 25),
 
             ElevatedButton(
-              onPressed: () {}, 
+              onPressed: () async {
+                final user = await authService.signInWithGoogle();
+                if (user != null && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Login Successful 🎉"),
+                    ),
+                  );
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const HomeScreen(),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Login Failed"),
+                    ),
+                  );
+                }
+              }, 
             child: Text("Continue with Google")
             ),
             SizedBox(height: 10),
