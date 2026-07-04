@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:city_scout/widgets/place_card.dart';
-import '../../data/city_data.dart';
+import '../../models/city.dart';
+import '../../services/city_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +11,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final CityService cityService = CityService();
+  List<City> cities = [];
+    final TextEditingController searchController =
+    TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    loadCities();
+  }
+
+  Future<void> loadCities() async {
+    final result = await cityService.searchCity("India");
+
+    setState(() {
+      cities = result;
+    });
+  }
+
+  Future<void> searchCity() async {
+
+  if (searchController.text.trim().isEmpty) return;
+
+  final result =
+      await cityService.searchCity(searchController.text);
+
+  setState(() {
+
+    cities = result;
+
+  });
+
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +72,14 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 15),
 
             TextField(
+              controller: searchController,
               decoration: InputDecoration(
                 hintText: "Search any city...",
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: const Icon(Icons.mic),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: searchCity,
+                ),
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -50,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onSubmitted: (_) => searchCity(),
             ),
             SizedBox(height: 15),
 

@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
 import '../models/city.dart';
+import '../screens/details/city_details_screen.dart';
 
 class PlaceCard extends StatelessWidget {
   final City city;
 
-  const PlaceCard({
-    super.key,
-    required this.city,
-  });
+  const PlaceCard({super.key, required this.city});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 180,
+      
+      child: InkWell(
+      onTap: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CityDetailsScreen(
+            city: city,
+          ),
+        ),
+      );
+      },
+      
       child: Card(
         elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                city.image,
-                style: const TextStyle(fontSize: 45),
+              const Icon(
+                Icons.location_city,
+                size: 55,
+                color: Colors.deepPurple,
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               Text(
                 city.name,
@@ -35,46 +46,28 @@ class PlaceCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
+                textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 8),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(city.rating.toString()),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
-              Text("${city.attractions} Attractions"),
-
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               Text(
-                city.food,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              Text(
-                city.culture,
+                city.displayName,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12),
               ),
+
+              const Spacer(),
+
+              Text("📍 ${city.latitude.toStringAsFixed(2)}"),
+
+              Text("🌍 ${city.longitude.toStringAsFixed(2)}"),
             ],
           ),
         ),
+      ),
       ),
     );
   }
