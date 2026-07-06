@@ -10,6 +10,8 @@ class City {
   final String food;
   final String culture;
 
+  String? imageUrl;
+
   City({
     required this.name,
     this.displayName = "",
@@ -21,6 +23,8 @@ class City {
     this.image = "",
     this.food = "",
     this.culture = "",
+
+    this.imageUrl,
   });
 
   factory City.fromJson(Map<String, dynamic> json) {

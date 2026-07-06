@@ -32,10 +32,24 @@ class PlaceCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.location_city,
-                size: 55,
-                color: Colors.deepPurple,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: city.imageUrl != null
+                    ? Image.network(
+                        city.imageUrl!,
+                        height: 110,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        height: 110,
+                        color: Colors.grey.shade200,
+                        child: const Icon(
+                          Icons.location_city,
+                          size: 55,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
               ),
 
               const SizedBox(height: 12),

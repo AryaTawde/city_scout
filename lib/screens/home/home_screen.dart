@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:city_scout/widgets/place_card.dart';
 import '../../models/city.dart';
 import '../../services/city_service.dart';
+import '../../services/image_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final CityService cityService = CityService();
+  final ImageService imageService = ImageService();
+
   List<City> cities = [];
     final TextEditingController searchController =
     TextEditingController();
@@ -30,19 +33,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> searchCity() async {
+    if (searchController.text.trim().isEmpty) return;
 
-  if (searchController.text.trim().isEmpty) return;
-
-  final result =
+    final result = 
       await cityService.searchCity(searchController.text);
 
-  setState(() {
+    for (final city in result) {
+      city.imageUrl =
+          await imageService.getCityImage(city.name);
+    }
+    setState(() {
+      cities = result;
+    });
+  }
 
-    cities = result;
-
-  });
-
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
