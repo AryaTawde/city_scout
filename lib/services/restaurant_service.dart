@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/place.dart';
 
-class PlaceService {
+import '../models/restaurant.dart';
 
-  Future<List<Place>> getAttractions(
-      double lat,
-      double lon,
-      ) async {
+class RestaurantService {
+
+  Future<List<Restaurant>> getRestaurants(
+    double lat,
+    double lon,
+  ) async {
 
     final query = """
     [out:json][timeout:25];
     (
-      node["tourism"="attraction"](around:2000,$lat,$lon);
+      node["amenity"="restaurant"](around:2000,$lat,$lon);
     );
     out body 20;
     """;
@@ -26,7 +27,7 @@ class PlaceService {
 
     if (response.statusCode != 200) {
       throw Exception(
-        "Failed: ${response.statusCode}\n${response.body}",
+      "Failed: ${response.statusCode}\n${response.body}",
       );
     }
 
@@ -35,7 +36,7 @@ class PlaceService {
     final List data = json["elements"];
 
     return data
-        .map((e) => Place.fromJson(e))
+        .map((e) => Restaurant.fromJson(e))
         .toList();
   }
 }

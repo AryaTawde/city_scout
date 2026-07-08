@@ -8,6 +8,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../models/place.dart';
 import '../../services/place_service.dart';
+import '../../models/restaurant.dart';
+import '../../services/restaurant_service.dart';
+import '../../services/ai_service.dart';
 
 class CityDetailsScreen extends StatefulWidget {
   final City city;
@@ -30,6 +33,12 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
   final PlaceService placeService = PlaceService();
   List<Place> attractions = [];
 
+  final RestaurantService restaurantService = RestaurantService();
+  List<Restaurant> restaurants = [];
+
+  final AIService aiService = AIService();
+  String? tripPlan;
+
   @override
   void initState() {
     super.initState();
@@ -39,20 +48,46 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
   Future<void> loadWeather() async {
     try {
       weather = await weatherService.getWeather(
-        widget.city.latitude, //for search city weather
+        widget.city.latitude, 
         widget.city.longitude,
-      );
+      );//for search city weather
+    } catch (e) { print(e); }
+
+    try {
       description = await wikiService.getDescription(
         widget.city.name,
       ); // for city description
-
+    } catch (e) { print(e); }
+    
+    try {
       attractions = await placeService.getAttractions(
-        widget.city.latitude, // for attractions
+       widget.city.latitude, 
         widget.city.longitude,
-      );
-    } catch (e) {
-      print(e);
-    }
+      );// for attractions
+    } catch (e) { print(e); }
+      
+    try {
+      restaurants = await restaurantService.getRestaurants(
+        widget.city.latitude,
+        widget.city.longitude,
+      ); // for reastaurants
+    } catch (e) { print(e); }
+
+    try{
+      tripPlan = await aiService.generateTripPlan(
+        city: widget.city.name,
+        weather:
+          "${weather!.temperature}°C, ${weatherDescription(weather!.weatherCode)}",
+        attractions: attractions
+          .map((e) => e.name)
+          .take(5)
+          .toList(),
+        restaurants: restaurants
+          .map((e) => e.name)
+          .take(5)
+          .toList(),
+      );//for ai_trip
+    } catch (e) {print(e);} 
 
     setState(() {
       isLoading = false;
@@ -246,20 +281,71 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
             const SizedBox(height: 12),
 
             ...attractions
-                .take(10)
-                .map(
-                  (place) => Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.place,
-                        color: Colors.deepPurple,
-                      ),
-                      title: Text(place.name),
+            .take(10)
+            .map(
+              (place) => Card(
+                margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.place,
+                      color: Colors.deepPurple,
                     ),
+                    title: Text(place.name),
                   ),
                 ),
-          ],
+              ),
+                
+            const SizedBox(height: 25),
+
+            const Text(
+              "Nearby Restaurants",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            ...restaurants.take(8).map(
+              (restaurant) => Card(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.restaurant,
+                    color: Colors.orange,
+                  ),
+                  title: Text(restaurant.name),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            const Text(
+              "🤖 AI Travel Planner",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Text(
+                  tripPlan ?? "Generating itinerary...",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            
+          ],//main children widget
         ),
       ),
     );
