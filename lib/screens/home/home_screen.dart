@@ -3,6 +3,7 @@ import 'package:city_scout/widgets/place_card.dart';
 import '../../models/city.dart';
 import '../../services/city_service.dart';
 import '../../services/image_service.dart';
+import '../../services/favorite_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final CityService cityService = CityService();
   final ImageService imageService = ImageService();
+  final FavoriteService favoriteService = FavoriteService();
 
   List<City> cities = [];
     final TextEditingController searchController =

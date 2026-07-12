@@ -9,6 +9,7 @@ class City {
   final String image;
   final String food;
   final String culture;
+  bool isFavorite;
 
   String? imageUrl;
 
@@ -23,6 +24,7 @@ class City {
     this.image = "",
     this.food = "",
     this.culture = "",
+    this.isFavorite = false,
 
     this.imageUrl,
   });
